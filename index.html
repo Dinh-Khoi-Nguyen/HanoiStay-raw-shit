@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HanoiStay | Trạm kết nối không gian sống</title>
+    <meta name="description" content="Trạm kết nối không gian sống đẳng cấp">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="container nav-inner">
+            <div class="logo" onclick="app.nav('home')">
+                <svg width="45" height="45" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10L10 40V90H90V40L50 10Z" stroke="#D4AF37" stroke-width="3" stroke-linejoin="round"/>
+                    <path d="M50 35L30 55C30 55 40 75 50 75C60 75 70 55 70 55L50 35Z" stroke="#D4AF37" stroke-width="3"/>
+                    <rect x="42" y="48" width="16" height="16" rx="2" stroke="#D4AF37" stroke-width="2"/>
+                </svg>
+                <div style="margin-left:12px;">
+                    <h1 style="font-size:22px; margin:0; line-height:1; color:white;">HANOISTAY</h1>
+                    <p style="font-size:9px; font-weight:700; color:var(--gold-primary); letter-spacing:2px; margin:0;">Trạm kết nối không gian sống</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a onclick="app.nav('home')" class="nav-link active" id="l-home">Khám Phá</a></li>
+                <li><a onclick="app.nav('map')" class="nav-link" id="l-map">Bản Đồ</a></li>
+                <li><a onclick="app.nav('news')" class="nav-link" id="l-news">Tin Tức</a></li>
+                <li><a onclick="app.nav('support')" class="nav-link" id="l-support">Hỗ Trợ</a></li>
+                <li><a onclick="app.nav('about')" class="nav-link" id="l-about">Giới Thiệu</a></li>
+            </ul>
+            
+            <div class="auth-actions">
+                <button class="btn btn-outline" onclick="Auth.open('login')">ĐĂNG NHẬP</button>
+                <button class="btn btn-filled" onclick="Auth.open('register')">ĐĂNG KÝ</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="view-home" class="view-section active" style="padding-top:0;">
+        <section class="hero">
+            <div class="hero-content">
+                <h1 style="font-size:68px; margin-bottom:15px; color:var(--gold-primary); text-shadow:0 0 30px rgba(212,175,55,0.4);">HANOISTAY</h1>
+                <p class="hero-slogan">Trạm kết nối không gian sống</p>
+                
+                <div class="search-container">
+                    <div class="search-card">
+                        <div class="search-header">LỌC TÌM PHÒNG</div>
+                        
+                        <div class="search-row-1">
+                            <div class="select-group"><span class="select-label">Tỉnh/Thành phố</span><select class="custom-select"><option>Thành phố Hà Nội</option></select></div>
+                            <div class="select-group"><span class="select-label">Quận/Huyện</span><select id="sDist" class="custom-select"><option value="all">Tất cả quận</option><option value="Cầu Giấy">Cầu Giấy</option><option value="Đống Đa">Đống Đa</option><option value="Thanh Xuân">Thanh Xuân</option></select></div>
+                            <div class="select-group"><span class="select-label">Loại phòng</span><select id="sType" class="custom-select"><option value="all">Tất cả loại</option><option value="Tro">Phòng trọ</option><option value="Mini">Chung cư Mini</option><option value="Studio">Studio</option></select></div>
+                        </div>
+
+                        <div style="margin-bottom:25px;">
+                            <label class="label-group">GIÁ <span style="color:var(--danger); font-size:11px;">(CHỌN KHOẢNG)</span></label>
+                            <div class="price-grid">
+                                <button class="price-btn active" onclick="app.setPrice('all', this)">Tất cả</button>
+                                <button class="price-btn" onclick="app.setPrice('low', this)">< 3M</button>
+                                <button class="price-btn" onclick="app.setPrice('mid', this)">3 - 5M</button>
+                                <button class="price-btn" onclick="app.setPrice('high', this)">5 - 8M</button>
+                                <button class="price-btn" onclick="app.setPrice('vip', this)">8 - 12M</button>
+                                <button class="price-btn" onclick="app.setPrice('max', this)">> 12M</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:30px;">
+                            <label class="label-group">TIỆN ÍCH <span style="color:var(--danger); font-size:11px;">(CHỌN THÊM)</span></label>
+                            <div class="amenity-tags">
+                                <div class="am-tag" onclick="this.classList.toggle('active')">Có máy lạnh</div>
+                                <div class="am-tag" onclick="this.classList.toggle('active')">Có gác</div>
+                                <div class="am-tag" onclick="this.classList.toggle('active')">Có tủ lạnh</div>
+                                <div class="am-tag" onclick="this.classList.toggle('active')">An ninh</div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-filled btn-full" style="height:50px; font-size:16px;" onclick="app.search()">TÌM KIẾM NGAY</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container listing-section">
+            <div class="section-head">
+                <h2 class="section-title">PHÒNG NỔI BẬT</h2>
+                <button class="btn btn-outline" onclick="app.nav('map')">XEM BẢN ĐỒ</button>
+            </div>
+            
+            <div class="room-grid" id="roomGrid"></div>
+            <div id="emptyState" class="hidden text-center" style="padding:100px; color:#666;">Không tìm thấy phòng phù hợp.</div>
+        </section>
+    </main>
+
+    <main id="view-map" class="view-section container" style="margin-top:60px;">
+        <h2 class="text-gold" style="font-size:36px; margin-bottom:30px;">QUÉT BẢN ĐỒ</h2>
+        <div class="map-section">
+            <div class="map-sidebar">
+                <div class="map-head"><i class="fas fa-radar"></i> TÌM QUANH ĐÂY</div>
+                <div class="radius-control">
+                    <div style="display:flex; justify-content:space-between; color:var(--text-sub); font-size:12px; margin-bottom:10px;">
+                        <span>BÁN KÍNH</span> <span id="radiusVal" class="text-gold">2 KM</span>
+                    </div>
+                    <input type="range" id="radiusRange" min="1" max="10" value="2" step="0.5" class="range-slider">
+                    <button class="btn btn-filled btn-full" style="margin-top:20px;" onclick="app.scanMap()">KÍCH HOẠT QUÉT</button>
+                </div>
+                <div id="mapResults" style="margin-top:30px;"></div>
+            </div>
+            <div id="scanMap"></div>
+        </div>
+    </main>
+
+    <main id="view-news" class="view-section container" style="margin-top:60px;">
+        <h2 style="font-size:36px; color:var(--gold-primary); margin-bottom:40px;">CẨM NANG & TIN TỨC</h2>
+        <div class="news-grid" style="display:grid; grid-template-columns:1.8fr 1fr; gap:40px;">
+            <div class="news-main" onclick="alert('Đọc tin...')">
+                <img src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200" alt="News">
+                <div class="news-overlay">
+                    <span style="color:var(--gold-primary); font-weight:700; font-size:12px; letter-spacing:1px;">NỔI BẬT</span>
+                    <h3 style="font-size:28px; margin-top:10px;">5 Kinh nghiệm xương máu khi tìm thuê phòng trọ tại Hà Nội</h3>
+                </div>
+            </div>
+            <div id="newsList"></div>
+        </div>
+    </main>
+
+    <main id="view-support" class="view-section container" style="margin-top:60px;">
+        <div class="support-grid">
+            <div>
+                <h2 style="color:var(--gold-primary); margin-bottom:30px;">CÂU HỎI THƯỜNG GẶP</h2>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <div class="faq-q">Quy định đăng tin? <i class="fas fa-plus text-gold"></i></div>
+                    <div class="faq-a">Thông tin phải chính xác 100% và hình ảnh thực tế.</div>
+                </div>
+                <div class="faq-item" onclick="this.classList.toggle('active')">
+                    <div class="faq-q">Phí dịch vụ môi giới? <i class="fas fa-plus text-gold"></i></div>
+                    <div class="faq-a">Hoàn toàn miễn phí cho người tìm thuê.</div>
+                </div>
+            </div>
+            <div style="background:var(--black-card); padding:40px; border:1px solid var(--border);">
+                <h3 style="color:white; margin-bottom:20px;">GỬI YÊU CẦU</h3>
+                <input class="form-control" placeholder="Email của bạn..." style="margin-bottom:15px;">
+                <textarea class="form-control" rows="4" placeholder="Nội dung cần hỗ trợ..."></textarea>
+                <button class="btn btn-filled btn-full" style="margin-top:20px;">GỬI NGAY</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="view-about" class="view-section container" style="margin-top:60px;">
+        <div class="about-hero">
+            <span class="badge badge-verified" style="background:rgba(212,175,55,0.1); color:var(--gold-primary); border:1px solid var(--gold-primary);">THƯƠNG HIỆU</span>
+            <h1 style="font-size:48px; margin:20px 0;">Sứ mệnh & Tầm nhìn</h1>
+            <p style="color:var(--text-sub); max-width:800px; margin:0 auto;">Kiến tạo chuẩn mực sống mới cho người Việt trẻ.</p>
+        </div>
+        <div class="mission-grid">
+            <div class="ms-card">
+                <h3>SỨ MỆNH</h3>
+                <p>Mang lại sự minh bạch, an toàn và tiện nghi trong từng không gian sống.</p>
+            </div>
+            <div class="ms-card" style="border-left-color:white;">
+                <h3 style="color:white;">TẦM NHÌN</h3>
+                <p>Trở thành hệ sinh thái PropTech số 1 Đông Nam Á vào năm 2030.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="detail-header-bar">
+                <span onclick="app.closeModal()" class="detail-back"><i class="fas fa-arrow-left"></i></span>
+                <span id="dCode">Phòng</span>
+            </div>
+            
+            <div class="d-body">
+                <img id="dImg" class="d-img">
+                <h1 id="dTitle" class="d-title"></h1>
+                <p id="dPrice" class="d-price"></p>
+                <p class="d-addr"><i class="fas fa-map-marker-alt text-gold"></i> <span id="dAddr"></span></p>
+
+                <div class="cost-table">
+                    <div class="cost-cell">Điện<br><span id="cElec" class="cost-val"></span></div>
+                    <div class="cost-cell">Nước<br><span id="cWater" class="cost-val"></span></div>
+                    <div class="cost-cell">Xe<br><span id="cBike" class="cost-val"></span></div>
+                    <div class="cost-cell">Dịch vụ<br><span id="cService" class="cost-val"></span></div>
+                </div>
+
+                <div id="amenityList" class="am-list"></div>
+
+                <h3 style="color:var(--gold-primary); font-size:16px; margin-top:30px;">Vị trí</h3>
+                <iframe id="dMap" class="map-embed" loading="lazy"></iframe>
+            </div>
+
+            <div class="detail-footer">
+                <button class="btn btn-filled btn-full">ĐẶT LỊCH XEM</button>
+                <div class="act-icon"><i class="far fa-comment-dots"></i> Chat</div>
+                <div class="act-icon" onclick="app.callHost()"><i class="fas fa-phone-alt"></i> Gọi</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="auth-box">
+            <button onclick="document.getElementById('authModal').style.display='none'" style="position:absolute; top:20px; right:20px; color:white; font-size:24px;">×</button>
+            <h2 style="color:var(--gold-primary); margin-bottom:30px;">ĐĂNG NHẬP</h2>
+            <input class="form-control" placeholder="Email" style="margin-bottom:15px;">
+            <input class="form-control" type="password" placeholder="Mật khẩu" style="margin-bottom:25px;">
+            <button class="btn btn-filled btn-full">TIẾP TỤC</button>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chat-btn" onclick="chatbot.toggle()"><i class="fas fa-comment-dots"></i></div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header"><span>HỖ TRỢ TRỰC TUYẾN</span><span onclick="chatbot.toggle()" style="cursor:pointer">×</span></div>
+        <div id="chatBody" class="chat-body"><div class="msg bot">Chào bạn! Tôi có thể giúp gì?</div></div>
+        <div class="chat-footer"><input id="chatInput" class="chat-input" placeholder="Nhập tin..."><button onclick="chatbot.send()" class="text-gold"><i class="fas fa-paper-plane"></i></button></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div><h2 style="color:var(--gold-primary); margin-bottom:20px;">HANOISTAY</h2><p style="font-size:13px; color:#666;">Trạm kết nối không gian sống<br>Phòng H301, Trường Đại Học Ngoại Thương</p></div>
+            <div><h4 style="color:white; margin-bottom:20px;">KHÁM PHÁ</h4><ul style="color:#666; font-size:14px;"><li>Lọc Tìm Phòng</li><li>Phòng Trọ</li></ul></div>
+            <div><h4 style="color:white; margin-bottom:20px;">HỖ TRỢ</h4><ul style="color:#666; font-size:14px;"><li>Bảng giá</li><li>Quy định</li></ul></div>
+            <div><h4 style="color:white; margin-bottom:20px;">LIÊN HỆ</h4><ul style="color:#666; font-size:14px;"><li>1900 8888</li><li>nhom4@hanoistay.vn</li></ul></div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>
